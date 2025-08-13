@@ -1,26 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// src/App.tsx
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import LoginPage from "./Pages/LoginPage";
+import RegisterPage from "./Pages/RegisterPage";
+import TasksPage from "./Pages/TasksPages";
+import TasksTablePage from "./Pages/TasksTablePage";
+import NotFoundPage from "./Pages/NotFoundPage";
+import ProtectedRoute from "./Components/ProtecteRoute";
+import Profile from "./Pages/profile";
+import Navbar from "./Components/Navbar";
+import { Task } from "./Type/type";
 
-function App() {
+function AppWrapper() {
+  // هذا الملف يحوي المنطق لاظهار او اخفاء الـ Navbar حسب الصفحة
+  const location = useLocation();
+
+  const hideNavbarPaths = ["/", "/register"]; // المسارات التي لا تريد اظهار الـ Navbar فيها
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    setTasks(savedTasks);
+  }, []);
+
+  const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {shouldShowNavbar && <Navbar />}
+      <Toaster position="top-center" reverseOrder={false} />
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+    
+        <Route
+          path="/tasks"
+          element={
+            <ProtectedRoute>
+              <TasksPage tasks={tasks} setTasks={setTasks} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tasks-table"
+          element={
+            <ProtectedRoute>
+              <TasksTablePage tasks={tasks} setTasks={setTasks} />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/profile" element={<Profile tasks={tasks} />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AppWrapper />
+    </Router>
+  );
+}
