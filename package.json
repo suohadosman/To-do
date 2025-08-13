@@ -2,10 +2,10 @@
   "name": "todo-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://suohadosman.github.io/T0-do",
+  "homepage": "https://suohadosman.github.io/To-do",
   "repository": {
     "type": "git",
-    "url": "https://github.com/suohadosman/T0-do.git"
+    "url": "https://github.com/suohadosman/To-do.git"
   },
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
